@@ -3,7 +3,6 @@ pipeline {
         docker {
             label 'docker-agent-python'
             image 'python:3.9' // Asigură-te că această imagine este configurată corect în Docker Cloud
-            args '-v /var/run/docker.sock:/var/run/docker.sock' // Opțional, în funcție de setările tale
         }
     }
     triggers {
