@@ -11,14 +11,14 @@ pipeline {
         stage('Pull from Git') {
             steps {
                 echo "Pulling from Git..."
-                git url: 'https://url-catre-repo-git.git', branch: 'main'
+                git url: 'https://github.com/cosminpopovici14/jenkins.git', branch: 'main'
             }
         }
         stage('Build') {
             steps {
                 echo "Building.."
                 sh '''
-                cd myapp
+                cd jenkins
                 pip install -r requirements.txt
                 '''
             }
@@ -27,7 +27,7 @@ pipeline {
             steps {
                 echo "Building GTest.."
                 sh '''
-                cd myapp/tests/gtest
+                cd jenkins/tests/gtest
                 mkdir -p build
                 cd build
                 cmake ..
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 echo "Running GTest.."
                 sh '''
-                cd myapp/tests/gtest/build
+                cd jenkins/tests/gtest/build
                 ./runTests
                 '''
             }
@@ -48,7 +48,7 @@ pipeline {
             steps {
                 echo "Running Script.."
                 sh '''
-                cd myapp
+                cd jenkins
                 python3 test.py
                 '''
             }
