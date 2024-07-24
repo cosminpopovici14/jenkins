@@ -1,7 +1,9 @@
 pipeline {
     agent { 
-        node {
+        docker {
             label 'docker-agent-python'
+            image 'python:3.9' // Asigură-te că această imagine este configurată corect în Docker Cloud
+            args '-v /var/run/docker.sock:/var/run/docker.sock' // Opțional, în funcție de setările tale
         }
     }
     triggers {
@@ -17,10 +19,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building Python dependencies..."
-                sh '''
-                cd jenkins
-                pip install -r requirements.txt
-                '''
+                sh 'pip install -r requirements.txt'
             }
         }
         stage('Build GTest') {
@@ -47,25 +46,19 @@ pipeline {
         stage('Run Script') {
             steps {
                 echo "Running Python script..."
-                sh '''
-                cd jenkins
-                python3 test.py
-                '''
+                sh 'python3 test.py'
             }
         }
         stage('Deliver') {
             steps {
                 echo 'Delivering...'
-                sh '''
-                echo "Doing delivery stuff..."
-                '''
+                sh 'echo "Doing delivery stuff..."'
             }
         }
     }
     post {
         always {
             echo 'Cleaning up...'
-            // Pași de curățenie, dacă sunt necesari
         }
         success {
             echo 'Pipeline completed successfully!'
