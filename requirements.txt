@@ -1,1 +1,1 @@
-# Adaugă dependențele necesare proiectului tău
+fire==0.4.0
