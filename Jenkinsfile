@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                echo "Building.."
+                echo "Building Python dependencies..."
                 sh '''
                 cd jenkins
                 pip install -r requirements.txt
@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Build GTest') {
             steps {
-                echo "Building GTest.."
+                echo "Building GTest..."
                 sh '''
                 cd jenkins/tests/gtest
                 mkdir -p build
@@ -37,7 +37,7 @@ pipeline {
         }
         stage('Run GTest') {
             steps {
-                echo "Running GTest.."
+                echo "Running GTest..."
                 sh '''
                 cd jenkins/tests/gtest/build
                 ./runTests
@@ -46,7 +46,7 @@ pipeline {
         }
         stage('Run Script') {
             steps {
-                echo "Running Script.."
+                echo "Running Python script..."
                 sh '''
                 cd jenkins
                 python3 test.py
@@ -55,9 +55,9 @@ pipeline {
         }
         stage('Deliver') {
             steps {
-                echo 'Deliver....'
+                echo 'Delivering...'
                 sh '''
-                echo "doing delivery stuff.."
+                echo "Doing delivery stuff..."
                 '''
             }
         }
@@ -65,7 +65,7 @@ pipeline {
     post {
         always {
             echo 'Cleaning up...'
-            // Orice pas de curățenie care trebuie executat indiferent de succesul pipeline-ului
+            // Pași de curățenie, dacă sunt necesari
         }
         success {
             echo 'Pipeline completed successfully!'
