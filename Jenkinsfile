@@ -11,7 +11,7 @@ pipeline {
         stage('Pull from Git') {
             steps {
                 echo "Pulling from Git..."
-                git url: 'https://url-catre-repo-git.git', branch: 'branch-name'
+                git url: 'https://url-catre-repo-git.git', branch: 'main'
             }
         }
         stage('Build') {
