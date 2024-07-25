@@ -2,6 +2,7 @@ pipeline {
     agent { 
         docker {
             label 'docker-agent-python'
+            image 'devopsjourney1/myjenkinsagents:python'
         }
     }
     triggers {
