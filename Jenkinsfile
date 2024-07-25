@@ -1,8 +1,7 @@
 pipeline {
     agent { 
         docker {
-            label 'docker'
-            image 'myjenkins-blueocean:2.332.3-1'
+            label 'docker-agent-python'
         }
     }
     triggers {
