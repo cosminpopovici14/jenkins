@@ -1,8 +1,8 @@
 pipeline {
     agent { 
         docker {
-            label 'docker-agent-python'
-            image 'python:3.9' // Asigură-te că această imagine este configurată corect în Docker Cloud
+            label 'docker'
+
         }
     }
     triggers {
