@@ -3,6 +3,7 @@ pipeline {
         docker {
             label 'docker-agent-python'
             image 'devopsjourney1/myjenkinsagents:python'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
     triggers {
