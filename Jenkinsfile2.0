@@ -1,0 +1,48 @@
+pipeline {
+    agent { 
+        node {
+            label 'jenkins-agent-goes-here'
+        }
+    }
+    stages {
+        stage('Clone Repository') {
+            steps {
+                echo "Cloning repository.."
+                git url: 'https://github.com/cosminpopovici14/jenkins.git', branch: 'main'
+            }
+        }
+        stage('Build GTest') {
+            steps {
+                echo "Building GTest.."
+                dir('tests/gtest') {
+                    sh '''
+                    mkdir -p build
+                    cd build
+                    cmake ..
+                    make
+                    '''
+                }
+            }
+        }
+        stage('Run GTest') {
+            steps {
+                echo "Running GTest.."
+                dir('tests/gtest/build') {
+                    sh './test_main'
+                }
+            }
+        }
+        stage('Install Python Dependencies') {
+            steps {
+                echo "Installing Python dependencies.."
+                sh 'pip install -r requirements.txt'
+            }
+        }
+        stage('Run Python Test') {
+            steps {
+                echo "Running Python Test.."
+                sh 'python3 test.py'
+            }
+        }
+    }
+}
