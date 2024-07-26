@@ -9,18 +9,12 @@ pipeline {
                 git url: 'https://github.com/cosminpopovici14/jenkins.git', branch: 'main'
             }
         }
-        stage('Install CMake') {
-            steps {
-                echo "Installing CMake.."
-                sh '''
-                # Descărcăm și instalăm CMake
-                wget https://github.com/Kitware/CMake/releases/download/v3.20.1/cmake-3.20.1-linux-x86_64.tar.gz
-                tar -xzvf cmake-3.20.1-linux-x86_64.tar.gz
-                cp -r cmake-3.20.1-linux-x86_64/* /usr/local/
-                cmake --version
-                '''
-            }
-        }
+        stage('Verify CMake Installation') {
+    steps {
+        echo "Verifying CMake installation.."
+        sh 'cmake --version'
+    }
+}
         stage('Build GTest') {
             steps {
                 echo "Building GTest.."
