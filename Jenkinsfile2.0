@@ -11,6 +11,17 @@ pipeline {
                 git url: 'https://github.com/cosminpopovici14/jenkins.git', branch: 'main'
             }
         }
+        stage('Install CMake') {
+            steps {
+                echo "Installing CMake.."
+                powershell '''
+                $cmakeUrl = "https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi"
+                $output = "cmake-3.21.3-windows-x86_64.msi"
+                Invoke-WebRequest -Uri $cmakeUrl -OutFile $output
+                Start-Process msiexec.exe -ArgumentList '/i', $output, '/quiet', '/norestart' -NoNewWindow -Wait
+                '''
+            }
+        }
         stage('Build GTest') {
             steps {
                 echo "Building GTest.."
