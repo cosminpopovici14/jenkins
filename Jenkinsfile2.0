@@ -14,9 +14,13 @@ pipeline {
         stage('Install CMake') {
             steps {
                 echo "Installing CMake.."
-                sh '''
-                apt-get update
-                apt-get install -y cmake
+                powershell '''
+                $ErrorActionPreference = 'Stop'
+                $url = "https://github.com/Kitware/CMake/releases/download/v3.20.1/cmake-3.20.1-windows-x86_64.msi"
+                $output = "cmake-installer.msi"
+                Invoke-WebRequest -Uri $url -OutFile $output
+                Start-Process msiexec.exe -ArgumentList '/i', $output, '/quiet', '/norestart' -NoNewWindow -Wait
+                Remove-Item $output
                 '''
             }
         }
@@ -24,8 +28,10 @@ pipeline {
             steps {
                 echo "Building GTest.."
                 dir('tests/gtest') {
-                    sh '''
-                    mkdir -p build
+                    powershell '''
+                    if (!(Test-Path build)) {
+                        New-Item -ItemType Directory -Path build
+                    }
                     cd build
                     cmake ..
                     cmake --build .
@@ -37,20 +43,20 @@ pipeline {
             steps {
                 echo "Running GTest.."
                 dir('tests/gtest/build') {
-                    sh './test_main'
+                    powershell './test_main'
                 }
             }
         }
         stage('Install Python Dependencies') {
             steps {
                 echo "Installing Python dependencies.."
-                sh 'pip install -r requirements.txt'
+                powershell 'pip install -r requirements.txt'
             }
         }
         stage('Run Python Test') {
             steps {
                 echo "Running Python Test.."
-                sh 'python test.py'
+                powershell 'python test.py'
             }
         }
     }
