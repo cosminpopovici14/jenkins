@@ -1,7 +1,7 @@
 pipeline {
     agent { 
         node {
-            label 'docker-agent-python'
+            label 'jenkins-agent-goes-here'
         }
     }
     stages {
@@ -28,7 +28,7 @@ pipeline {
                     mkdir -p build
                     cd build
                     cmake ..
-                    make
+                    cmake --build .
                     '''
                 }
             }
@@ -50,7 +50,7 @@ pipeline {
         stage('Run Python Test') {
             steps {
                 echo "Running Python Test.."
-                sh 'python3 test.py'
+                sh 'python test.py'
             }
         }
     }
