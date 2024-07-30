@@ -1,9 +1,9 @@
 pipeline {
     agent { 
-            node {
-                label 'docker-agent-python'
-                }
+        node {
+            label 'docker-agent-python'
         }
+    }
     stages {
         stage('Clone Repository') {
             steps {
@@ -12,17 +12,18 @@ pipeline {
             }
         }
         stage('Verify CMake Installation') {
-    steps {
-        echo "Verifying CMake installation.."
-        sh 'cmake --version'
-    }
-}
+            steps {
+                echo "Verifying CMake installation.."
+                sh 'cmake --version'
+            }
+        }
         stage('Build GTest') {
             steps {
                 echo "Building GTest.."
                 dir('tests/gtest') {
                     sh '''
                     # Construim GTest
+                    set -e
                     if [ ! -d "build" ]; then
                         mkdir build
                     fi
@@ -37,7 +38,11 @@ pipeline {
             steps {
                 echo "Running GTest.."
                 dir('tests/gtest/build') {
-                    sh './test_main'
+                    sh '''
+                    set -e
+                    chmod +x ./test_main
+                    ./test_main
+                    '''
                 }
             }
         }
@@ -50,7 +55,11 @@ pipeline {
         stage('Run Python Test') {
             steps {
                 echo "Running Python Test.."
-                sh 'python test.py'
+                sh '''
+                set -e
+                chmod +x test.py
+                python test.py
+                '''
             }
         }
     }
