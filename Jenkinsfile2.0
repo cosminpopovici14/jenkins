@@ -1,6 +1,6 @@
 pipeline {
     agent { 
-            label 'python-agent'
+            label 'docker-agent-python'
         }
     stages {
         stage('Clone Repository') {
