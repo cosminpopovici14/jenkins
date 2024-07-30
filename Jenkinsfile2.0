@@ -1,6 +1,8 @@
 pipeline {
     agent { 
-        image 'cosminpopovici14/docker-agent-python:latest'
+        docker {
+            image 'cosminpopovici14/docker-agent-python:latest'
+        }
     }
     stages {
         stage('Clone Repository') {
