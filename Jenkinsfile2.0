@@ -28,7 +28,8 @@ pipeline {
                         mkdir build
                     fi
                     cd build
-                    cmake ..
+                    ls -l
+                    cmake .
                     cmake --build .
                     '''
                 }
@@ -40,6 +41,7 @@ pipeline {
                 dir('tests/gtest/build') {
                     sh '''
                     set -e
+                    ls -l
                     chmod +x ./test_main
                     ./test_main
                     '''
