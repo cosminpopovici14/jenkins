@@ -57,7 +57,11 @@ pipeline {
             steps {
                 echo "Checking out gtest branch.."
                 dir('jenkins') {
-                    sh 'git checkout gtest'
+                    sh '''
+                    git stash
+                    git checkout gtest
+                    git stash pop || true
+                    '''
                 }
             }
         }
