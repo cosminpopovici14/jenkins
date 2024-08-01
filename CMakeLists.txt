@@ -1,16 +1,15 @@
-# CMakeLists.txt
+cmake_minimum_required(VERSION 3.10)
 
-# Adăugăm submodulul GoogleTest
-add_subdirectory(tests/gtest)
+project(MyProject)
 
-# Adăugăm teste
+# Include GoogleTest
+add_subdirectory(googletest)
+
 enable_testing()
 
-# Adăugăm executabilul testelor
-add_executable(test_main tests/main.cpp)
+# Add test executable
+add_executable(gtest_main test_main.cpp)  # Asigură-te că `test_main.cpp` este fișierul tău de test
 
-# Linkăm GoogleTest
-target_link_libraries(test_main gtest gtest_main)
-
-# Definim testele
-add_test(NAME MyTests COMMAND test_main)
+# Link test executable with GoogleTest
+target_link_libraries(gtest_main gtest gmock gtest_main)
+add_test(NAME my_test COMMAND gtest_main)
