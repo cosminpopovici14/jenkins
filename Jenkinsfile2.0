@@ -79,15 +79,11 @@ pipeline {
         stage('Build GTest') {
             steps {
                 echo "Building GTest.."
-                dir('jenkins') {
+                dir('jenkins/tests/gtest') {
                     sh '''
-                    # Verificăm locația CMakeLists.txt
-                    if [ -f tests/gtest/CMakeLists.txt ]; then
-                        cd tests/gtest
-                    elif [ -f CMakeLists.txt ]; then
-                        cd .
-                    else
-                        echo "CMakeLists.txt not found"
+                    # Verificăm dacă există un CMakeLists.txt pentru testele noastre
+                    if [ ! -f CMakeLists.txt ]; then
+                        echo "CMakeLists.txt not found in tests/gtest"
                         exit 1
                     fi
                     
@@ -97,12 +93,12 @@ pipeline {
                         mkdir build
                     fi
                     cd build
-                    cmake .. -DGTEST_SRC_DIR=../../tests/gtest
+                    cmake ..
                     cmake --build .
                     
                     # Verificăm dacă executabilul a fost creat
-                    if [ ! -f test_main ]; then
-                        echo "test_main not found"
+                    if [ ! -f gtest_main ]; then
+                        echo "gtest_main not found"
                         exit 1
                     fi
                     '''
@@ -115,8 +111,8 @@ pipeline {
                 dir('jenkins/tests/gtest/build') {
                     sh '''
                     set -e
-                    chmod +x ./test_main
-                    ./test_main
+                    chmod +x ./gtest_main
+                    ./gtest_main
                     '''
                 }
             }
