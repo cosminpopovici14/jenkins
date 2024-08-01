@@ -7,8 +7,11 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                echo "Cloning repository.."
-                git url: 'https://github.com/cosminpopovici14/jenkins.git', branch: 'main'
+                echo "Cloning repository with all branches.."
+                sh 'git clone https://github.com/cosminpopovici14/jenkins2.0.git'
+                dir('jenkins2.0') {
+                    sh 'git remote update --prune'
+                }
             }
         }
         stage('Verify CMake Installation') {
@@ -17,10 +20,46 @@ pipeline {
                 sh 'cmake --version'
             }
         }
+        stage('Checkout Main Branch') {
+            steps {
+                echo "Checking out main branch.."
+                dir('jenkins2.0') {
+                    sh 'git checkout main'
+                }
+            }
+        }
+        stage('Install Python Dependencies') {
+            steps {
+                echo "Installing Python dependencies.."
+                dir('jenkins2.0') {
+                    sh 'pip install -r requirements.txt'
+                }
+            }
+        }
+        stage('Run Python Test') {
+            steps {
+                echo "Running Python Test.."
+                dir('jenkins2.0') {
+                    sh '''
+                    set -e
+                    chmod +x test.py
+                    python test.py
+                    '''
+                }
+            }
+        }
+        stage('Checkout gtest Branch') {
+            steps {
+                echo "Checking out gtest branch.."
+                dir('jenkins2.0') {
+                    sh 'git checkout gtest'
+                }
+            }
+        }
         stage('Build GTest') {
             steps {
                 echo "Building GTest.."
-                dir('tests/gtest') {
+                dir('jenkins2.0/tests/gtest') {
                     sh '''
                     # Construim GTest
                     set -e
@@ -29,7 +68,7 @@ pipeline {
                     fi
                     cd build
                     ls -l
-                    cmake .
+                    cmake ..
                     cmake --build .
                     '''
                 }
@@ -38,7 +77,7 @@ pipeline {
         stage('Run GTest') {
             steps {
                 echo "Running GTest.."
-                dir('tests/gtest/build') {
+                dir('jenkins2.0/tests/gtest/build') {
                     sh '''
                     set -e
                     ls -l
@@ -46,22 +85,6 @@ pipeline {
                     ./test_main
                     '''
                 }
-            }
-        }
-        stage('Install Python Dependencies') {
-            steps {
-                echo "Installing Python dependencies.."
-                sh 'pip install -r requirements.txt'
-            }
-        }
-        stage('Run Python Test') {
-            steps {
-                echo "Running Python Test.."
-                sh '''
-                set -e
-                chmod +x test.py
-                python test.py
-                '''
             }
         }
     }
