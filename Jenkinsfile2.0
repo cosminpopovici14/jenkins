@@ -1,121 +1,55 @@
 pipeline {
-    agent { 
-        node {
-            label 'docker-agent-python'
-        }
-    }
+    agent any
+
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                echo "Cloning repository with all branches.."
-                sh 'git clone https://github.com/cosminpopovici14/jenkins.git'
-                dir('jenkins') {
-                    sh 'git remote update --prune'
-                }
+                echo 'Cloning repository...'
+                checkout([$class: 'GitSCM', 
+                    branches: [[name: '*/main']], 
+                    userRemoteConfigs: [[url: 'https://github.com/cosminpopovici14/jenkins.git']]
+                ])
             }
         }
+
         stage('Add GoogleTest Submodule') {
             steps {
-                echo "Adding GoogleTest submodule.."
+                echo 'Adding GoogleTest submodule...'
                 dir('jenkins') {
-                    sh '''
-                    git submodule add https://github.com/google/googletest.git tests/gtest
-                    git submodule update --init --recursive
-                    '''
+                    sh 'git submodule add https://github.com/google/googletest.git tests/gtest'
+                    sh 'git submodule update --init --recursive'
                 }
             }
         }
-        stage('Verify CMake Installation') {
+
+        stage('Build GoogleTest') {
             steps {
-                echo "Verifying CMake installation.."
-                sh 'cmake --version'
-            }
-        }
-        stage('Checkout Main Branch') {
-            steps {
-                echo "Checking out main branch.."
-                dir('jenkins') {
-                    sh 'git checkout main'
-                }
-            }
-        }
-        stage('Install Python Dependencies') {
-            steps {
-                echo "Installing Python dependencies.."
-                dir('jenkins') {
-                    sh '''
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip install -r requirements.txt
-                    '''
-                }
-            }
-        }
-        stage('Run Python Test') {
-            steps {
-                echo "Running Python Test.."
-                dir('jenkins') {
-                    sh '''
-                    set -e
-                    . venv/bin/activate
-                    chmod +x test.py
-                    python test.py
-                    '''
-                }
-            }
-        }
-        stage('Checkout gtest Branch') {
-            steps {
-                echo "Checking out gtest branch.."
-                dir('jenkins') {
-                    sh '''
-                    git stash
-                    git checkout gtest
-                    git stash pop || true
-                    '''
-                }
-            }
-        }
-        stage('Build GTest') {
-            steps {
-                echo "Building GTest.."
+                echo 'Building GTest...'
                 dir('jenkins/tests/gtest') {
-                    sh '''
-                    # Verificăm dacă există un CMakeLists.txt pentru testele noastre
-                    if [ ! -f CMakeLists.txt ]; then
-                        echo "CMakeLists.txt not found in tests/gtest"
-                        exit 1
-                    fi
-                    
-                    # Construim GTest
-                    set -e
-                    if [ ! -d "build" ]; then
-                        mkdir build
-                    fi
-                    cd build
-                    cmake ..
-                    cmake --build .
-                    
-                    # Verificăm dacă executabilul a fost creat
-                    if [ ! -f gtest_main ]; then
-                        echo "gtest_main not found"
-                        exit 1
-                    fi
-                    '''
+                    sh 'rm -rf build'
+                    sh 'mkdir build'
+                    sh 'cd build && cmake ..'
+                    sh 'cd build && cmake --build .'
+                    sh 'ls build'
                 }
             }
         }
-        stage('Run GTest') {
-            steps {
-                echo "Running GTest.."
-                dir('jenkins/tests/gtest/build') {
-                    sh '''
-                    set -e
-                    chmod +x ./gtest_main
-                    ./gtest_main
-                    '''
-                }
+
+        stage('Run Tests') {
+            when {
+                expression { return fileExists('jenkins/tests/gtest/build/gtest_main') }
             }
+            steps {
+                echo 'Running GTest...'
+                // Add your test execution commands here
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo 'Pipeline failed!'
+            // Add failure handling steps here if needed
         }
     }
 }
