@@ -8,8 +8,8 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo "Cloning repository with all branches.."
-                sh 'git clone https://github.com/cosminpopovici14/jenkins2.0.git'
-                dir('jenkins2.0') {
+                sh 'git clone https://github.com/cosminpopovici14/jenkins.git'
+                dir('jenkins') {
                     sh 'git remote update --prune'
                 }
             }
@@ -23,7 +23,7 @@ pipeline {
         stage('Checkout Main Branch') {
             steps {
                 echo "Checking out main branch.."
-                dir('jenkins2.0') {
+                dir('jenkins') {
                     sh 'git checkout main'
                 }
             }
@@ -31,7 +31,7 @@ pipeline {
         stage('Install Python Dependencies') {
             steps {
                 echo "Installing Python dependencies.."
-                dir('jenkins2.0') {
+                dir('jenkins') {
                     sh 'pip install -r requirements.txt'
                 }
             }
@@ -39,7 +39,7 @@ pipeline {
         stage('Run Python Test') {
             steps {
                 echo "Running Python Test.."
-                dir('jenkins2.0') {
+                dir('jenkins') {
                     sh '''
                     set -e
                     chmod +x test.py
@@ -51,7 +51,7 @@ pipeline {
         stage('Checkout gtest Branch') {
             steps {
                 echo "Checking out gtest branch.."
-                dir('jenkins2.0') {
+                dir('jenkins') {
                     sh 'git checkout gtest'
                 }
             }
@@ -59,7 +59,7 @@ pipeline {
         stage('Build GTest') {
             steps {
                 echo "Building GTest.."
-                dir('jenkins2.0/tests/gtest') {
+                dir('jenkins/tests/gtest') {
                     sh '''
                     # Construim GTest
                     set -e
@@ -77,7 +77,7 @@ pipeline {
         stage('Run GTest') {
             steps {
                 echo "Running GTest.."
-                dir('jenkins2.0/tests/gtest/build') {
+                dir('jenkins/tests/gtest/build') {
                     sh '''
                     set -e
                     ls -l
