@@ -68,15 +68,24 @@ pipeline {
         stage('Build GTest') {
             steps {
                 echo "Building GTest.."
-                dir('jenkins/tests/gtest') {
+                dir('jenkins') {
                     sh '''
+                    # Verificăm locația CMakeLists.txt
+                    if [ -f tests/gtest/CMakeLists.txt ]; then
+                        cd tests/gtest
+                    elif [ -f CMakeLists.txt ]; then
+                        cd .
+                    else
+                        echo "CMakeLists.txt not found"
+                        exit 1
+                    fi
+                    
                     # Construim GTest
                     set -e
                     if [ ! -d "build" ]; then
                         mkdir build
                     fi
                     cd build
-                    ls -l
                     cmake ..
                     cmake --build .
                     '''
@@ -89,7 +98,6 @@ pipeline {
                 dir('jenkins/tests/gtest/build') {
                     sh '''
                     set -e
-                    ls -l
                     chmod +x ./test_main
                     ./test_main
                     '''
