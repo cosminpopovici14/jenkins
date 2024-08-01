@@ -32,7 +32,11 @@ pipeline {
             steps {
                 echo "Installing Python dependencies.."
                 dir('jenkins') {
-                    sh 'pip install -r requirements.txt'
+                    sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                    '''
                 }
             }
         }
@@ -42,6 +46,7 @@ pipeline {
                 dir('jenkins') {
                     sh '''
                     set -e
+                    . venv/bin/activate
                     chmod +x test.py
                     python test.py
                     '''
