@@ -6,9 +6,6 @@ project(GTestProject)
 # Setează standardul C++
 set(CMAKE_CXX_STANDARD 11)
 
-# Adaugă subdirectorul unde se află codul sursă
-add_subdirectory(src)
-
 # Include GoogleTest
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
