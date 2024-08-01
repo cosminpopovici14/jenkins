@@ -14,6 +14,17 @@ pipeline {
                 }
             }
         }
+        stage('Add GoogleTest Submodule') {
+            steps {
+                echo "Adding GoogleTest submodule.."
+                dir('jenkins') {
+                    sh '''
+                    git submodule add https://github.com/google/googletest.git tests/gtest
+                    git submodule update --init --recursive
+                    '''
+                }
+            }
+        }
         stage('Verify CMake Installation') {
             steps {
                 echo "Verifying CMake installation.."
@@ -86,7 +97,7 @@ pipeline {
                         mkdir build
                     fi
                     cd build
-                    cmake ..
+                    cmake .. -DGTEST_SRC_DIR=../../tests/gtest
                     cmake --build .
                     '''
                 }
