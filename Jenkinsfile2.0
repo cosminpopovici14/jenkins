@@ -99,6 +99,12 @@ pipeline {
                     cd build
                     cmake .. -DGTEST_SRC_DIR=../../tests/gtest
                     cmake --build .
+                    
+                    # Verificăm dacă executabilul a fost creat
+                    if [ ! -f test_main ]; then
+                        echo "test_main not found"
+                        exit 1
+                    fi
                     '''
                 }
             }
